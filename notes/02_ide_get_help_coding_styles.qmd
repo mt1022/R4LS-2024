@@ -1,0 +1,259 @@
+---
+title: "Basics"
+format: html
+editor_options: 
+  chunk_output_type: console
+---
+
+## Introduction to RStudio IDE
+- Source
+- Console
+- Environment
+- History
+- Files
+- Plots
+- Help
+
+## How to run R code
+- from the console
+- from the source code editor
+- from the command line
+
+```{r}
+cat('Hello, world!')
+
+x <- 'Zhang San'
+cat('Hello, ', x, '!', sep='')
+```
+
+```{bash}
+Rscript --vanilla tmp/hello.R "Li Si"
+```
+
+## Install packages
+Within R
+```{r}
+install.packages('package_name')
+```
+
+With miniforge (suitable on servers or for packages with complex dependency)
+```{bash}
+mamba install conda-forge::r-tidyr
+mamba install bioconda::bioconductor-deseq2
+```
+
+load installed packages
+```{r}
+library(tidyverse)
+```
+
+## Getting help
+```{r}
+# option 1
+# get internal documentation
+?pluck
+help(pluck)
+
+# option 2
+# see source code
+help
+pluck
+
+# option 3
+# seach online (google or other websites)
+# preferred sources: stackoverflow, github
+
+# option 4
+# ask large language models
+
+# option 5
+# ask an experienced user for help
+# be sure to prepare a reprex (minimal reproducible example)
+```
+
+Tips:
+> Invest in yourself. You should also spend some time preparing yourself to solve problems before they occur. Investing a little time in learning R each day will pay off handsomely in the long run.
+
+## Plots
+```{r}
+plot(1:10)
+
+pdf('tmp/110.pdf', width = 4, height = 3)
+plot(1:10)
+dev.off()
+
+library(ggplot2)
+
+ggplot(mtcars, aes(x = wt, y = mpg)) + 
+  geom_point() + 
+  theme_minimal()
+ggsave('tmp/mtcars_wt_mpg.png', width = 4, height = 3)
+```
+
+## projects
+- how to create a new project
+- it's better to keep all relevant files in the same project folder.
+
+project organization
+```
+.
+├── 01_noise_ploidy_simulation.ipynb
+├── 02_scrna_data_integration.ipynb
+├── README.md
+├── S01_10xv3_raw_to_cellbarcode_matrix.qmd
+├── S02_10xv3_cellbender_scdblfinder.qmd
+├── S03_cbmatrix_qc.ipynb
+├── data                                                   # raw data; downloaded data
+│   ├── HAv3.1.57.gtf.txinfo.tsv
+│   ├── LiuJiamin_GeneList_20231127.xlsx
+│   ├── LiuJiamin_GeneList_20231127_PeakSummary.xlsx
+│   ├── NEE_2023_Traniello_SI.xlsx
+│   ├── apiscc_cau.txinfo.tsv
+├── figures                                                # visualizations with reasonable names
+│   ├── acer_all_cluster_deg_filtered.pdf
+│   ├── acer_all_cluster_deg_good_markers.pdf
+│   ├── acer_all_cluster_fano_pairs.png
+│   ├── acer_all_cluster_marker_exp.pdf
+│   ├── acer_before_integration.pdf
+│   ├── acer_integration.pdf
+│   └── seurat_sctransform_cca_integration.pdf
+├── results                                                # processed data; analysis results;
+│   ├── FCA_cell_type_markers_clean.tsv
+│   └── orthofinder_ace_orthologs_pairwise_aceK.tsv.gz
+├── src                                                    # scripts to be run from cmdline
+│   ├── simulation.jl
+│   └── run_scDblFinder.R
+└── tmp                                                    # temporary files; can be deleted later
+    ├── 01_simulation-Copy1.ipynb
+    ├── README.md
+    ├── Untitled.ipynb
+    └── acer_all_clu_0_cnt_stats.tsv
+```
+
+## scripts
+- suffix: pure R scirpts: `.R` or markdown (`.Rmd`, `.qmd` or `.md`)
+- name: meanningful, lower_case, no space or special characters; preferrably numbered.
+    - like: `01_prepare_data.qmd`, `02_xxx_analysis.qmd`, `03_yyy_analysis.qmd`
+
+## Other tips
+- save your open files frequently.
+- backup your code (for example, github/gitlab/gitee/gitlink)
+- write comments
+- leave some space
+
+## coding styles
+
+### Assignment
+
+- Only use `=` when setting function arguments;
+- Never use `->`;
+
+```{r}
+# Good
+x <- 5
+
+# syntactically correct but Bad
+x = 5
+5 -> x
+```
+
+
+### names (of variables or functions)
+```{r}
+# prefer: simple, meaningful, lower_case;
+iris_setosa <- iris |> filter(Species == 'setosa')
+# avoid:
+subset_of_setosa_in_iris_dataset <- iris |> filter(Species == 'setosa')
+irisSetosa <- filter(iris, Species == 'setosa')
+IrisSetosa <- filter(iris, Species == 'setosa')
+iRISSETOSA <- filter(iris, Species == 'setosa')
+a <- filter(iris, Species == 'setosa')
+b <- filter(iris, Species == 'versicolor')
+ab <- bind_rows(a, b)
+
+# Bad: avoid using names of base functions or variables
+T <- FALSE
+c <- 10
+mean <- function(x) sum(x)
+
+```
+
+### spaces
+```{r}
+# good
+z <- (a + b)^2 / d
+# bad
+z<-( a + b ) ^ 2/d
+
+# good
+mean(x, na.rm = TRUE)
+# bad
+mean (x ,na.rm=TRUE)    # sapce after ",", not before ahead of ","
+mean( x ,na.rm=TRUE)
+mean( x, na.rm=TRUE )
+
+# Good
+x[, 1]
+# Bad
+x[,1]
+x[ ,1]
+x[ , 1]
+
+# except these operators: ::, :::, $, @, ^, [, [[, unary - (like "-4"), unary + (like "+4");
+# Most binoary operators should have spaces around them: ==, +, -, <- etc.
+```
+
+### Indentation
+
+indent properly
+```{r}
+# good
+if (y == 0) {
+  if (x > 0) {
+    log(x)
+  } else {
+    message("x is negative or zero")
+  }
+} else {
+  y^x
+}
+
+# bad
+if (y == 0)
+{
+    if (x > 0) {
+      log(x)
+    } else {
+  message("x is negative or zero")
+    }
+} else { y ^ x }
+```
+
+`|>` or `%>%` should always have a space before it and should typically be the last thing on a line. After the first step of the pipeline, indent each line by two or four spaces.
+
+(similar rules apply when composing figures with `+` using ggplot2)
+
+```{r}
+# good
+iris |> 
+  janitor::clean_names() |>
+  group_by(species) |> 
+  summarize(across(everything(), \(x) mean(x, na.rm = TRUE))) |> 
+  arrange(sepal_width)
+
+# bad
+iris|>janitor::clean_names()|>group_by(species)|>summarize(across(everything(), \(x) mean(x, na.rm = TRUE)))|>arrange(sepal_width)
+```
+
+### Comments
+Each line of a comment should begin with the comment symbol and a single space: `# `.
+
+## Suggested readings
+- more on coding styles: https://style.tidyverse.org/index.html
+
+## References
+Some examples or notes in this page were directly copied from the following sources:
+
+- https://style.tidyverse.org/index.html by Hadley Wickham
+- https://r4ds.hadley.nz/ by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.
+
