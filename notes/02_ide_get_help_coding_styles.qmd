@@ -78,7 +78,7 @@ Tips:
 ```{r}
 plot(1:10)
 
-pdf('tmp/110.pdf', width = 4, height = 3)
+pdf('notes/tmp/110.pdf', width = 4, height = 3)
 plot(1:10)
 dev.off()
 
@@ -87,7 +87,7 @@ library(ggplot2)
 ggplot(mtcars, aes(x = wt, y = mpg)) + 
   geom_point() + 
   theme_minimal()
-ggsave('tmp/mtcars_wt_mpg.png', width = 4, height = 3)
+ggsave('notes/tmp/mtcars_wt_mpg.png', width = 4, height = 3)
 ```
 
 ## projects
@@ -97,9 +97,9 @@ ggsave('tmp/mtcars_wt_mpg.png', width = 4, height = 3)
 project organization
 ```
 .
-├── 01_noise_ploidy_simulation.ipynb
+├── 01_noise_simulation.ipynb
 ├── 02_scrna_data_integration.ipynb
-├── README.md
+├── README.md                                              # project description
 ├── S01_10xv3_raw_to_cellbarcode_matrix.qmd
 ├── S02_10xv3_cellbender_scdblfinder.qmd
 ├── S03_cbmatrix_qc.ipynb
@@ -130,6 +130,13 @@ project organization
     └── acer_all_clu_0_cnt_stats.tsv
 ```
 
+*Tips for project management*
+- Never save workpace (`.Rdata`) nor load existing `.Rdata`; Always save history.
+  - where to set: Global options -> General -> Basic panel.
+- Better to use relative paths in your code (relative to the project folder).
+- Avoid using `setwd()` in your code.
+
+
 ## scripts
 - suffix: pure R scirpts: `.R` or markdown (`.Rmd`, `.qmd` or `.md`)
 - name: meanningful, lower_case, no space or special characters; preferrably numbered.
@@ -145,8 +152,11 @@ project organization
 
 ### Assignment
 
+- Always use `<-` for assignment.
 - Only use `=` when setting function arguments;
 - Never use `->`;
+- Avoid using `attach()`. It may accidentally overwrite existing variables.
+- Avoid using `assign()`. Often you have better alternative ways.
 
 ```{r}
 # Good
@@ -160,9 +170,9 @@ x = 5
 
 ### names (of variables or functions)
 ```{r}
-# prefer: simple, meaningful, lower_case;
+# Good: simple, meaningful, lower_case;
 iris_setosa <- iris |> filter(Species == 'setosa')
-# avoid:
+# bad
 subset_of_setosa_in_iris_dataset <- iris |> filter(Species == 'setosa')
 irisSetosa <- filter(iris, Species == 'setosa')
 IrisSetosa <- filter(iris, Species == 'setosa')
@@ -170,6 +180,7 @@ iRISSETOSA <- filter(iris, Species == 'setosa')
 a <- filter(iris, Species == 'setosa')
 b <- filter(iris, Species == 'versicolor')
 ab <- bind_rows(a, b)
+a2 <- a |> arrange(Sepal.Length)
 
 # Bad: avoid using names of base functions or variables
 T <- FALSE
@@ -199,13 +210,13 @@ x[,1]
 x[ ,1]
 x[ , 1]
 
-# except these operators: ::, :::, $, @, ^, [, [[, unary - (like "-4"), unary + (like "+4");
-# Most binoary operators should have spaces around them: ==, +, -, <- etc.
+# except these operators: :, ::, :::, $, @, ^, [, [[, unary - (like "-4"), unary + (like "+4");
+# Most binary operators should have spaces around them: ==, +, -, <- etc.
 ```
 
 ### Indentation
 
-indent properly
+indent properly (2 or 4 spaces; strive for consistency within a script or project).
 ```{r}
 # good
 if (y == 0) {
